@@ -1,0 +1,10 @@
+{
+    "dev": {
+      "host": "localhost",
+      "user": "root",
+      "password" : "1amplenty7",
+      "database": "hia",
+      "driver": "mysql",
+      "multipleStatements": true
+    }
+}

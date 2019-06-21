@@ -18,8 +18,8 @@ app.listen(port, () => {
 
 //console.log(path.resolve(__dirname + '/../frontend'));
 
-// server static files
-app.use(express.static(path.resolve(__dirname + '/../frontend')));
+// serve static files
+//app.use(express.static(path.resolve(__dirname + '/../frontend')));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

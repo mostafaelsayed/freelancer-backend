@@ -1,147 +1,38 @@
-let mysql = require('mysql');
 let util = require('util');
 const utilOptions = {showHidden: false, depth: null};
 
 module.exports = {
-    // createConnection: function() {
-    //     let connection =  mysql.createConnection({
-    //         host     : 'localhost',
-    //         user     : 'root',
-    //         password : '1amplenty7',
-    //         database : 'freelancer',
-    //         port: 3306,
-    //         multipleStatements: true,
-    //     });
+    createConnection: function() {
+        // const Sequelize = require('sequelize');
 
-    //     return connection;
-    // },
+        // // Option 1: Passing parameters separately
+        // const sequelize = new Sequelize('freelancer', process.env.DB_USERNAME || 'root', process.env.DB_PASSWORD || 'mostafa', {
+        //     host: process.env.DB_HOST || 'localhost',
+        //     dialect: 'mysql'
+        // });
 
-    // createPoolConnection: function() {
-    //     let connection =  mysql.createPool({
-    //         host     : 'localhost',
-    //         user     : 'root',
-    //         password : '1amplenty7',
-    //         database : 'freelancer',
-    //         port: 3306,
-    //         multipleStatements: true,
-    //     });
+        // sequelize.authenticate().then(() => {
+        //     console.log('Connection has been established successfully.');
+        // }).catch(err => {
+        //     console.error('Unable to connect to the database:', err);
+        // });
 
-    //     return connection;
-    // },
+        // return sequelize;
 
-    connection: mysql.createConnection({
-        host     : 'localhost',
-        user     : 'root',
-        password : '1amplenty7',
-        database : 'freelancer',
-        port: 3306,
-        multipleStatements: true,
-    }),
+        // Option 2: Passing a connection URI
+        //const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname');
 
-    // poolConnection: mysql.createPool({
-    //     host     : 'localhost',
-    //     user     : 'root',
-    //     password : '1amplenty7',
-    //     database : 'freelancer',
-    //     port: 3306,
-    //     multipleStatements: true,
-    // }),
-    
-    iterationCount: 0,
-    numberOfInserts: 0,
 
-    initSQLconnection: function(callback=null) {
-        mysql.exports.connection.connect(function(err) {
-            if (err) {
-                console.log('error connecting : ', util.inspect(err, utilOptions));
 
-                if (callback != null) {
-                    callback(err, undefined);
-                }
-            }
-            else {
-                console.log('success connecting to db');
+        // Load the Cloudant library.
+        var Cloudant = require('@cloudant/cloudant');
 
-                if (callback != null) {
-                    callback(undefined, 1);
-                }
-            }
-            //console.log('connected as id ' + connection.threadId);
-        });
-    },
+        var account = process.env.DB_USERNAME || '685fb89f-93c1-4d19-a96a-5f4994ecc65a-bluemix'; // Set this to your own account.
+        var password = process.env.DB_PASSWORD || '3381fae3cc57bbe208a27e239b43d7f48f7052daad3868e7d6b7b005e8a23e41';
 
-    constructStringFromArray: function(arr, column=0) {
-        let len = arr.length;
-        let returnedString = '';
+        // Initialize the library with my account.
+        var cloudant = Cloudant({ account: account, password: password });
 
-        if (column === 0) {
-            returnedString = '"' + arr[0] + '"';
-
-            for (let i = 1; i < len; i++) {
-                returnedString = returnedString + ',' + '"' + arr[i] + '"';
-            }
-        }
-        else if (column === 1) {
-            returnedString = '`' + arr[0] + '`';
-            
-            for (let i = 1; i < len; i++) {
-                returnedString = returnedString + ',' + '`' + arr[i] + '`';
-            }
-        }
-
-        //console.log('returnedString : ', returnedString);
-        return returnedString;
-    },
-
-    insertRows: function(table, columns, arrOfValues, callback=null) {
-        let rowsLength = arrOfValues.length;
-        let columnsString = module.exports.constructStringFromArray(columns, 1);
-        let valuesString = module.exports.constructStringFromArray(arrOfValues[0]);
-        table = '`' + table + '`';
-        let insertStmt = `insert into ${table}(${columnsString}) values (${valuesString})`;
-
-        for (var i = 1; i < rowsLength; i++) {
-            valuesString = ',' + module.exports.constructStringFromArray(arrOfValues[i]);
-            insertStmt = insertStmt + ',(' + valuesString + ')' 
-        }
-
-        insertStmt = insertStmt + ';';
-
-        module.exports.numberOfInserts++;
-        console.log('inside insert ', module.exports.numberOfInserts);
-
-        //console.log('insertStmt : ', insertStmt);
-
-        module.exports.connection.query(insertStmt, function(er, result) {
-            if (er) {
-                console.log('error insert : ', util.inspect(er, utilOptions));
-
-                if (callback != null) {
-                    callback(er, undefined);
-                }
-            }
-            else {
-                console.log('success insert. result is : ', util.inspect(result, utilOptions));
-                //let n2 = d.getTime();
-                //console.log('time is :' + ((n2 - n1) / 1000));
-                //module.exports.iterationCount++;
-                //console.log('inserted chunk number : ', module.exports.iterationCount);
-                if (callback != null) {
-                    callback(undefined, result);
-                }
-            }
-        });
-    },
-
-    insertRowsInChunks: function(table, columns, arrOfValues, project, chunkSize, callback=null) {
-        let ind1 = 0;
-        let ind2 = chunkSize;
-
-        while (ind1 < arrOfValues.length) {
-            let values = arrOfValues.slice(ind1, ind2);
-            module.exports.insertRows(table, columns, values, project, callback);
-            ind1 += chunkSize;
-            ind2 += chunkSize;
-        }
+        return cloudant.db.use('freelancer');
     }
 }

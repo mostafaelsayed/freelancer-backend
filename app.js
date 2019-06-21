@@ -4,7 +4,7 @@ let express = require('express');
 let path = require('path');
 let app = express();
 let bodyParser = require('body-parser')
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 // http.createServer(app, function(req, res) {
 // 	console.log('created');

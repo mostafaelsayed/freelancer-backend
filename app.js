@@ -3,8 +3,11 @@ let api = require('./routes/api')(); // we must call the function to return the 
 let express = require('express');
 let path = require('path');
 let app = express();
+let cors = require('cors')
 let bodyParser = require('body-parser')
 const port = process.env.PORT || 8000;
+
+app.use(cors());
 
 // http.createServer(app, function(req, res) {
 // 	console.log('created');

@@ -39,22 +39,22 @@ module.exports = function() {
                     if (!er2) {
                         if (res2 === true) {
                             console.log('success login');
-                            res.send('success login');
+                            res.json({message: 'success login'});
                         }
                         else {
                             console.log('fail login');
-                            res.send('fail login');
+                            res.json({message: 'fail login'});
                         }
                     }
                     else {
                         console.log('error comparing password : ', util.inspect(er2, utilOptions));
-                        res.send('fail login');
+                        res.json({message: 'fail login'});
                     }
                 });
             }
             else {
                 console.log('error get hash : ', util.inspect(er1, utilOptions));
-                res.send('fail login');
+                res.json({message: 'fail login'});
             }
         });
     });
@@ -79,19 +79,19 @@ module.exports = function() {
                             }
                             else {
                                 console.log('error signup : ', util.inspect(err3, utilOptions));
-                                res.send('signup failed');
+                                res.json({message: 'signup failed'});
                             }
                         });
                     }
                     else {
                         console.log('error hashing password : ', util.inspect(err2, utilOptions));
-                        res.send('signup failed');
+                        res.json({message: 'signup failed'});
                     }
                 });
             }
             else {
                 console.log('error genSalt : ', util.inspect(err1, utilOptions));
-                res.send('signup failed');
+                res.json({message: 'signup failed'});
             }
         });        
     });

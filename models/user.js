@@ -1,16 +1,29 @@
-var db = require('./database').createConnection().db;
+let db = require('./database').createConnection();
+let util = require('util');
 
 module.exports = {
-  getFreelancers: function(callback) {
-    db.view('users', 'freelancers', {
+  getUsers: function(callback) {
+    db.view('general', 'users', {
       'include_docs': true
     }, function(err, result) {
-      callback(err, result);
+      if (!err) {
+        callback(undefined, result);
+      }
+      else {
+        console.log('error get users : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
     });
   },
-  addFreelancer: function(freelancerDoc, callback) {
-    db.insert(freelancerDoc, freelancerDoc.email, function(err, result) {
-      callback(err, result);
+  addUser: function(userData, callback) {
+    db.insert(userData, userData.email, function(err) {
+      if (!err) {
+        callback();
+      }
+      else {
+        console.log('error add user : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
     });
   }
 };

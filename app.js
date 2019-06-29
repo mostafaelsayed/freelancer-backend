@@ -1,12 +1,17 @@
-//let http = require('http');
 let api = require('./routes/api')(); // we must call the function to return the router for us
+let userApi = require('./routes/user')();
+let projectApi = require('./routes/project')();
 let express = require('express');
-let path = require('path');
 let app = express();
 let cors = require('cors')
 let bodyParser = require('body-parser')
 const port = process.env.PORT || 8000;
 
+// global variables
+global.utilOptions = { depth: null };
+
+
+// enable cors for all origins
 app.use(cors());
 
 // http.createServer(app, function(req, res) {
@@ -19,11 +24,6 @@ app.listen(port, () => {
 	console.log('listening on port ' + port);
 });
 
-//console.log(path.resolve(__dirname + '/../frontend'));
-
-// serve static files
-//app.use(express.static(path.resolve(__dirname + '/../frontend')));
-
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
  
@@ -31,3 +31,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/', api);
+app.use('/', userApi);
+app.use('/', projectApi);

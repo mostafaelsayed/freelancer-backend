@@ -3,8 +3,8 @@ let router = express.Router();
 let project = require('../models/project');
 
 module.exports = function() {
-    router.get('/getProjects', function(req, res) {
-        project.getProjects(function(err, result) {
+    router.get('/api/getProjects', function(req, res) {
+        project.getProjects(req, function(err, result) {
             if (!err) {
                 res.json(result);
             }
@@ -14,7 +14,7 @@ module.exports = function() {
         });
     });
 
-    router.post('/addProject', function(req, res) {
+    router.post('/api/addProject', function(req, res) {
         project.addProject(req.body.projectData, function(err) {
             if (!err) {
                 res.json({message: 'success add project'});

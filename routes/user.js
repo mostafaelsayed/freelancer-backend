@@ -3,10 +3,11 @@ let util = require('util');
 let bcrypt = require('bcryptjs');
 let express = require('express');
 let router = express.Router();
+let jwt = require('jsonwebtoken');
 
 module.exports = function() {
 
-    router.post('/api/login', function(req, res) {
+    router.post('/login', function(req, res) {
         console.log('req body login : ', util.inspect(req.body, utilOptions));
         let inputEmail = req.body.email;
         let inputPassword = req.body.password;
@@ -20,12 +21,27 @@ module.exports = function() {
                 // compare the hash of the input password with the stored hash
                 bcrypt.compare(inputPassword, hash, function(er2, res2) {
                     if (!er2) {
+                        console.log('res2 : ', util.inspect(res2, utilOptions));
+                        console.log('er2 : ', util.inspect(er2, utilOptions));
                         if (res2 === true) {
                             console.log('success login');
-                            res.json({message: 'success login'});
+                            req.session.user = {};
+
+                            req.session.user = {
+                                email: inputEmail
+                            };
+                            req.session.save(function(err) {
+                                // session saved
+                                if (err) {
+                                    console.log('error saving session : ', err);
+                                }
+                              });
+
+                            res.json({message: 'success login', token: jwt.sign({email: inputEmail}, '987fdgo1z09qjla0934lksdp0', {expiresIn: 24*60*60 })});
+                            
                         }
                         else {
-                            console.log('fail login');
+                            console.log('fail login : ', util.inspect(er2, utilOptions));
                             res.json({message: 'fail login'});
                         }
                     }
@@ -42,7 +58,7 @@ module.exports = function() {
         });
     });
 
-    router.post('/api/signup', function(req, res) {
+    router.post('/signup', function(req, res) {
         console.log('req body signup : ', util.inspect(req.body, utilOptions));
         let inputEmail = req.body.email;
         let inputPassword = req.body.password;
@@ -77,6 +93,10 @@ module.exports = function() {
                 res.json({message: 'signup failed'});
             }
         });
+    });
+
+    router.get('/api/getUsers', function(req, res) {
+
     });
 
     return router;

@@ -2,16 +2,19 @@ let db = require('./database').createConnection();
 let util = require('util');
 
 module.exports = {
-  getProjects: function(callback) {
-    db.view('client', 'projects', {
-      'include_docs': true
-    }, function(err, result) {
+  getProjects: function(req, callback) {
+    let selector = {
+      "selector": {
+        "owner": req.session.user.email
+      }
+    }
+    db.find(selector, function(err, result) {
         if (!err) {
-            callback(undefined, result);
+          callback(undefined, result);
         }
         else {
-            console.log('error get projects : ', util.inspect(err, utilOptions));
-            callback(1);
+          console.log('error get projects : ', util.inspect(err, utilOptions));
+          callback(1);
         }
     });
   },

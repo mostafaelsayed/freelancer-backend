@@ -10,7 +10,23 @@ module.exports = {
     }
     db.find(selector, function(err, result) {
         if (!err) {
-          callback(undefined, result);
+          callback(undefined, result.docs);
+        }
+        else {
+          console.log('error get projects : ', util.inspect(err, utilOptions));
+          callback(1);
+        }
+    });
+  },
+  getProject: function(name, callback) {
+    let selector = {
+      "selector": {
+        "name": name
+      }
+    }
+    db.find(selector, function(err, result) {
+        if (!err) {
+          callback(undefined, result.docs[0]);
         }
         else {
           console.log('error get projects : ', util.inspect(err, utilOptions));

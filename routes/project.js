@@ -14,6 +14,17 @@ module.exports = function() {
         });
     });
 
+    router.get('/api/getProject', function(req, res) {
+        project.getProject(req.query.projectName, function(err, result) {
+            if (!err) {
+                res.json(result);
+            }
+            else {
+                res.json({message: 'error get project'});
+            }
+        });
+    });
+
     router.post('/api/addProject', function(req, res) {
         project.addProject(req.body.projectData, function(err) {
             if (!err) {

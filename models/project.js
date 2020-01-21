@@ -3,14 +3,12 @@ let util = require('util');
 
 module.exports = {
   getProjects: function(req, callback) {
-    let selector = {
-      "selector": {
-        "owner": req.session.user.email
-      }
-    }
-    db.find(selector, function(err, result) {
+    let query = `select * from test.projects where user_id = '${req.session.user.id}';`;
+
+    db.query(query, function(err, result) {
         if (!err) {
-          callback(undefined, result.docs);
+          console.log('success get all projects');
+          callback(undefined, result.rows);
         }
         else {
           console.log('error get projects : ', util.inspect(err, utilOptions));
@@ -35,8 +33,11 @@ module.exports = {
     });
   },
   addProject: function(projectData, callback) {
-    db.insert(projectData, projectData.name, function(err) {
+    let query = `insert into test.projects(name, description, user_id) values ('${projectData.name}', '${projectData.description}', '${projectData.user_id}')`;
+
+    db.query(query, function(err) {
         if (!err) {
+          console.log('success add project');
             callback();
         }
         else {

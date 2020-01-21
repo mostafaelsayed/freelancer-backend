@@ -1,8 +1,23 @@
 let util = require('util');
 const utilOptions = {showHidden: false, depth: null};
+;
+const { Client } = require('pg');
+
+const client = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'test',
+    password: 'mostafa',
+    port: 5432,
+  });
+
 
 module.exports = {
     createConnection: function() {
+            
+        client.connect().then((success) => {
+            console.log('successfully connected to postgres database');
+        });
         // const Sequelize = require('sequelize');
 
         // // Option 1: Passing parameters separately
@@ -25,14 +40,8 @@ module.exports = {
 
 
         // Load the Cloudant library.
-        var Cloudant = require('@cloudant/cloudant');
 
-        var account = process.env.DB_USERNAME || '685fb89f-93c1-4d19-a96a-5f4994ecc65a-bluemix'; // Set this to your own account.
-        var password = process.env.DB_PASSWORD || '3381fae3cc57bbe208a27e239b43d7f48f7052daad3868e7d6b7b005e8a23e41';
 
-        // Initialize the library with my account.
-        var cloudant = Cloudant({ account: account, password: password });
-
-        return cloudant.db.use('freelancer');
+        return client;
     }
 }

@@ -13,7 +13,7 @@ let util = require('util');
 global.utilOptions = { depth: null };
 
 // enable cors for all origins
-app.use(cors());
+app.use(cors({credentials: true, origin: true}));
 
 // use express-session
 app.use(expressSession({

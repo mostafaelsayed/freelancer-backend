@@ -13,10 +13,10 @@ module.exports = function() {
         let inputPassword = req.body.password;
 
         // get document by id
-        db.get(inputEmail, function(er1, res1) {
+        db.query(`select * from test.users where email = '${inputEmail}';`, function(er1, res1) {
             if (!er1) {
-                console.log('result get hash : ', util.inspect(res1, utilOptions));
-                let hash = res1['passwordHash'];
+                console.log('result get user : ', util.inspect(res1, utilOptions));
+                let hash = res1.rows[0]['password_hash'];
 
                 // compare the hash of the input password with the stored hash
                 bcrypt.compare(inputPassword, hash, function(er2, res2) {
@@ -25,10 +25,11 @@ module.exports = function() {
                         console.log('er2 : ', util.inspect(er2, utilOptions));
                         if (res2 === true) {
                             console.log('success login');
-                            req.session.user = {};
+                            //req.session.user = {};
 
                             req.session.user = {
-                                email: inputEmail
+                                email: inputEmail,
+                                id: res1.rows[0]['id']
                             };
                             req.session.save(function(err) {
                                 // session saved
@@ -67,12 +68,17 @@ module.exports = function() {
             if (!err1) {
                 bcrypt.hash(inputPassword, salt, function(err2, hash) {
                     if (!err2) {
-                        db.insert({email: inputEmail, passwordHash: hash}, inputEmail, function(err3, res3) {
+                        db.query(`insert into test.users(email, password_hash) values('${inputEmail}', '${hash}');`, function(err3, res3) {
                             if (!err3) {
                                 // Store hash in DB.
                                 //let escapedEmail = db.connection.escape(inputEmail);
                                 //let escapedEmailLength = escapedEmail.length;
                                 //escapedEmail = escapedEmail.substring(1, escapedEmailLength - 1);
+                                console.log('success insert user : ', util.inspect(res3, utilOptions));
+                                req.session.user = {
+                                    email: inputEmail,
+                                    id: res3.id
+                                };
 
                                 res.json(res3);
                             }

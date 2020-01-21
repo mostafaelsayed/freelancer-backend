@@ -1,5 +1,6 @@
-let db = require('./database').createConnection();
-let util = require('util');
+const db = require('./database').createConnection();
+const util = require('util');
+const utilOptions = { depth: null };
 
 module.exports = {
   getUsers: function(callback) {

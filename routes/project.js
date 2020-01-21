@@ -5,8 +5,8 @@ const util = require('util');
 const utilOptions = { depth: null };
 
 module.exports = function() {
-    router.get('/api/getProjects', function(req, res) {
-        project.getProjects(req, function(err, result) {
+    router.get('/getProjects', function(req, res) {
+        project.getProjects(res.locals.userId, function(err, result) {
             if (!err) {
                 console.log('success get user projects');
                 res.json(result);
@@ -18,8 +18,8 @@ module.exports = function() {
         });
     });
 
-    router.get('/api/getProject', function(req, res) {
-        project.getProject(req.query.projectName, function(err, result) {
+    router.get('/getProjectById', function(req, res) {
+        project.getProjectById(req.query.projectId, res.locals.userId, function(err, result) {
             if (!err) {
                 res.json(result);
             }
@@ -29,8 +29,8 @@ module.exports = function() {
         });
     });
 
-    router.post('/api/addProject', function(req, res) {
-        req.body.user_id = req.session.user.id;
+    router.post('/addProject', function(req, res) {
+        req.body.user_id = res.locals.userId;
         
         project.addProject(req.body, function(err) {
             if (!err) {

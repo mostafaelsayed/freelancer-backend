@@ -75,7 +75,7 @@ module.exports = function() {
             if (!err1) {
                 bcrypt.hash(inputPassword, salt, function(err2, hash) {
                     if (!err2) {
-                        db.query(`insert into test.users(email, password_hash) values('${inputEmail}', '${hash}');`, function(err3, res3) {
+                        db.query(`insert into test.users(email, password_hash) values('${inputEmail}', '${hash}') returning *;`, function(err3, res3) {
                             if (!err3) {
                                 // Store hash in DB.
                                 //let escapedEmail = db.connection.escape(inputEmail);
@@ -83,7 +83,7 @@ module.exports = function() {
                                 //escapedEmail = escapedEmail.substring(1, escapedEmailLength - 1);
                                 const token = getToken({
                                     email: inputEmail,
-                                    id: res3.id
+                                    id: res3.rows[0]['id']
                                 });
 
                                 console.log('success insert user : ', util.inspect(res3, utilOptions));
@@ -110,7 +110,7 @@ module.exports = function() {
         });
     });
 
-    router.get('/api/getUsers', function(req, res) {
+    router.get('/getUsers', function(req, res) {
 
     });
 

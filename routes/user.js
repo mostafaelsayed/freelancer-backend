@@ -1,10 +1,11 @@
-const db = require('../models/database').createConnection();
+
 const util = require('util');
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
 const getToken = require('../helpers/authentication-helper').getToken;
 const utilOptions = { depth: null };
+const user = require('../models/user');
 
 module.exports = function() {
 
@@ -14,7 +15,7 @@ module.exports = function() {
         let inputPassword = req.body.password;
 
         // get document by id
-        db.query(`select * from test.users where email = '${inputEmail}';`, function(er1, res1) {
+        user.getUser(inputEmail, function(er1, res1) {
             if (!er1) {
                 console.log('result get user : ', util.inspect(res1, utilOptions));
                 const hash = res1.rows[0]['password_hash'];
@@ -75,7 +76,7 @@ module.exports = function() {
             if (!err1) {
                 bcrypt.hash(inputPassword, salt, function(err2, hash) {
                     if (!err2) {
-                        db.query(`insert into test.users(email, password_hash) values('${inputEmail}', '${hash}') returning *;`, function(err3, res3) {
+                        user.addUser({inputEmail, hash}, function(err3, res3) {
                             if (!err3) {
                                 // Store hash in DB.
                                 //let escapedEmail = db.connection.escape(inputEmail);

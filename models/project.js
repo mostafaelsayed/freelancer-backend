@@ -1,12 +1,12 @@
-const db = require('./database').createConnection();
+const db = require('../database/connection').createConnection();
 const util = require('util');
 const utilOptions = { depth: null };
 
 module.exports = {
   getProjects: function(userId, callback) {
-    let query = `select * from test.projects where user_id = '${userId}';`;
+    const query = `select * from ${db.schema}.projects where user_id = '${userId}';`;
 
-    db.query(query, function(err, result) {
+    db.client.query(query, function(err, result) {
       if (!err) {
         console.log('success get all projects');
         callback(undefined, result.rows);
@@ -18,9 +18,9 @@ module.exports = {
     });
   },
   getProjectById: function(projectId, userId, callback) {
-    let query = `select * from test.projects where id = '${projectId}' and user_id = '${userId}';`;
+    const query = `select * from ${db.schema}.projects where id = '${projectId}' and user_id = '${userId}';`;
 
-    db.query(query, function(err, result) {
+    db.client.query(query, function(err, result) {
         if (!err) {
           console.log('success get project by id');
           callback(undefined, result.rows[0]);
@@ -32,9 +32,9 @@ module.exports = {
     });
   },
   addProject: function(projectData, callback) {
-    let query = `insert into test.projects(name, description, user_id) values ('${projectData.name}', '${projectData.description}', '${projectData.user_id}')`;
+    const query = `insert into ${db.schema}.projects(name, description, user_id) values ('${projectData.name}', '${projectData.description}', '${projectData.user_id}')`;
 
-    db.query(query, function(err) {
+    db.client.query(query, function(err) {
         if (!err) {
           console.log('success add project');
           callback();

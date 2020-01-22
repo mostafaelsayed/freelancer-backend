@@ -1,0 +1,14 @@
+{
+    "Admin": {
+        "value": "Admin",
+        "id": 1
+    },
+    "Freelancer": {
+        "value": "Freelancer",
+        "id": 2
+    },
+    "Client": {
+        "value": "Client",
+        "id": 3
+    }
+}

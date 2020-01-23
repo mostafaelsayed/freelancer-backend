@@ -1,14 +1,11 @@
 {
     "Admin": {
-        "value": "Admin",
-        "id": 1
+        "value": "admin"
     },
     "Freelancer": {
-        "value": "Freelancer",
-        "id": 2
+        "value": "freelancer"
     },
     "Client": {
-        "value": "Client",
-        "id": 3
+        "value": "client"
     }
 }

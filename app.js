@@ -2,16 +2,14 @@
 const userApi = require('./routes/user')();
 const projectApi = require('./routes/project')();
 const express = require('express');
-const tokenSecret = require('./config/secrets').tokenSecret;
 //const expressSession = require('express-session');
 const app = express();
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const port = process.env.PORT || 8000;
-const jwt = require("jsonwebtoken");
-const util = require('util');
-// global variables
-const utilOptions = { depth: null };
+
+
+const verifyToken = require('./helpers/authentication-helper').verifyToken;
 
 // enable cors for all origins
 app.use(cors({credentials: true, origin: true}));
@@ -31,41 +29,18 @@ app.use(bodyParser.json());
 
 // middleware for api requests
 app.use('/api', function(req, res, next) {
+	console.log('req.url : ', req.url);
 	if (req.url != '/signup' && req.url != '/login') {
-		console.log('req.url : ', req.url);
-		//console.log('req.session.user : ', req.session.user);
-		const token = req.headers['authorization'];
+		verifyToken(req.headers['authorization']).then((userId) => {
+			console.log('user id after verify : ', userId);
+			res.locals.userId = userId;
 
-		console.log('token : ', token);
-		
-		jwt.verify(token, tokenSecret, function(err, decoded) {
-			if (err) {
-				console.log("Failed to authenticate token..");
+			return next();
 
-				return res.status(403).send({
-					success: false,
-					message: 'Failed to authenticate token....'
-				});
-			}
-			else {
-				console.log('verified token : ', util.inspect(decoded, utilOptions));
-
-				if (decoded && decoded.email) {
-					// Set user UID in the request
-					// In a real application the user profile should be retrieved from the persistent storage here
-					// req.user = {
-					// 	email: decoded.email
-					// };
-					// if (!req.session.user) {
-					// 	req.session.user = {};
-					// }
-
-					// req.session.user.email = decoded.email;
-					res.locals.userId = decoded.id;
-
-					return next();
-				}
-			}
+		}).catch((err) => {
+			return res.status(403).send({
+				message: 'Failed to authenticate token....'
+			});
 		});
 	}
 

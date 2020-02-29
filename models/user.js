@@ -18,7 +18,7 @@ module.exports = {
     });
   },
   addUser: function(userData, callback) {
-    let query = `insert into ${db.schema}.users(email, password_hash) values('${userData.inputEmail}', '${userData.hash}') returning *;`;
+    let query = `insert into ${db.schema}.users(email, role, password_hash) values('${userData.inputEmail}', '${userData.inputRoles}', '${userData.hash}') returning *;`;
 
     db.client.query(query, (err, success) => {
       if (!err) {

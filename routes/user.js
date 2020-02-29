@@ -9,6 +9,56 @@ const user = require('../models/user');
 
 module.exports = function() {
 
+    router.post('/signup', function(req, res) {
+        console.log('req body signup : ', util.inspect(req.body, utilOptions));
+        let inputEmail = req.body.email;
+
+        // arrays in postgres are inserted like this : '{freelancer, client}' (curly brackets not square brackets).
+        let roles = req.body.roles.join(',');
+        roles = roles.replace("'", '');
+        roles = roles.replace('"', '');
+        let inputRoles = '{' + roles + '}';
+        const inputPassword = req.body.password;
+        
+        bcrypt.genSalt(10, function(err1, salt) {
+            if (!err1) {
+                bcrypt.hash(inputPassword, salt, function(err2, hash) {
+                    if (!err2) {
+                        user.addUser({inputEmail, inputRoles, hash}, function(err3, res3) {
+                            if (!err3) {
+                                // Store hash in DB.
+                                //let escapedEmail = db.connection.escape(inputEmail);
+                                //let escapedEmailLength = escapedEmail.length;
+                                //escapedEmail = escapedEmail.substring(1, escapedEmailLength - 1);
+                                const token = getToken({
+                                    email: inputEmail,
+                                    id: res3.rows[0]['id']
+                                });
+
+                                console.log('success insert user : ', util.inspect(res3, utilOptions));
+                                
+
+                                res.json({message: 'success register', token});
+                            }
+                            else {
+                                console.log('error signup : ', util.inspect(err3, utilOptions));
+                                res.json({message: 'signup failed'});
+                            }
+                        });
+                    }
+                    else {
+                        console.log('error hashing password : ', util.inspect(err2, utilOptions));
+                        res.json({message: 'signup failed'});
+                    }
+                });
+            }
+            else {
+                console.log('error genSalt : ', util.inspect(err1, utilOptions));
+                res.json({message: 'signup failed'});
+            }
+        });
+    });
+
     router.post('/login', function(req, res) {
         console.log('req body login : ', util.inspect(req.body, utilOptions));
         let inputEmail = req.body.email;
@@ -16,7 +66,7 @@ module.exports = function() {
 
         // get document by id
         user.getUser(inputEmail, function(er1, res1) {
-            if (!er1) {
+            if (!er1 && res1.rows[0]) {
                 console.log('result get user : ', util.inspect(res1, utilOptions));
                 const hash = res1.rows[0]['password_hash'];
 
@@ -24,7 +74,6 @@ module.exports = function() {
                 bcrypt.compare(inputPassword, hash, function(er2, res2) {
                     if (!er2) {
                         console.log('res2 : ', util.inspect(res2, utilOptions));
-                        console.log('er2 : ', util.inspect(er2, utilOptions));
                         
                         if (res2 === true) {
                             console.log('success login');
@@ -61,52 +110,8 @@ module.exports = function() {
                 });
             }
             else {
-                console.log('error get hash : ', util.inspect(er1, utilOptions));
+                console.log('error get user by email : ', util.inspect(er1, utilOptions));
                 res.json({message: 'fail login'});
-            }
-        });
-    });
-
-    router.post('/signup', function(req, res) {
-        console.log('req body signup : ', util.inspect(req.body, utilOptions));
-        let inputEmail = req.body.email;
-        const inputPassword = req.body.password;
-        
-        bcrypt.genSalt(10, function(err1, salt) {
-            if (!err1) {
-                bcrypt.hash(inputPassword, salt, function(err2, hash) {
-                    if (!err2) {
-                        user.addUser({inputEmail, hash}, function(err3, res3) {
-                            if (!err3) {
-                                // Store hash in DB.
-                                //let escapedEmail = db.connection.escape(inputEmail);
-                                //let escapedEmailLength = escapedEmail.length;
-                                //escapedEmail = escapedEmail.substring(1, escapedEmailLength - 1);
-                                const token = getToken({
-                                    email: inputEmail,
-                                    id: res3.rows[0]['id']
-                                });
-
-                                console.log('success insert user : ', util.inspect(res3, utilOptions));
-                                
-
-                                res.json({message: 'success register', token});
-                            }
-                            else {
-                                console.log('error signup : ', util.inspect(err3, utilOptions));
-                                res.json({message: 'signup failed'});
-                            }
-                        });
-                    }
-                    else {
-                        console.log('error hashing password : ', util.inspect(err2, utilOptions));
-                        res.json({message: 'signup failed'});
-                    }
-                });
-            }
-            else {
-                console.log('error genSalt : ', util.inspect(err1, utilOptions));
-                res.json({message: 'signup failed'});
             }
         });
     });

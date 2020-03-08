@@ -16,6 +16,5 @@
 
 **Role Management**
 
-1. Register either as freelancer or client.
-2. Client only can create and edit his/her own project.
-3. The client that created the project and any other freelancer can view the project.
+1. Client only can create and edit his/her own project.
+2. The client that created the project and any other freelancer can view the project.

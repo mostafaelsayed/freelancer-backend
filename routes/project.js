@@ -42,5 +42,31 @@ module.exports = function() {
         });
     });
 
+    router.post('/editProject', function(req, res) {
+        req.body.user_id = res.locals.userId;
+        
+        project.editProject(req.body, function(err) {
+            if (!err) {
+                res.json({message: 'success edit project'});
+            }
+            else {
+                res.json({message: 'error edit project'});
+            }
+        });
+    });
+
+    router.post('/deleteProject', function(req, res) {
+        req.body.user_id = res.locals.userId;
+        
+        project.deleteProject(req.body, function(err) {
+            if (!err) {
+                res.json({message: 'success delete project'});
+            }
+            else {
+                res.json({message: 'error delete project'});
+            }
+        });
+    });
+
     return router;
 }

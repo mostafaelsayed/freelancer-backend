@@ -32,7 +32,7 @@ module.exports = {
     });
   },
   addProject: function(projectData, callback) {
-    const query = `insert into ${db.schema}.projects(name, description, user_id) values ('${projectData.name}', '${projectData.description}', '${projectData.user_id}')`;
+    const query = `insert into ${db.schema}.projects(name, description, user_id) values ('${(projectData.name).trim()}', '${(projectData.description).trim()}', '${projectData.user_id}')`;
 
     db.client.query(query, function(err) {
       if (!err) {
@@ -47,7 +47,7 @@ module.exports = {
   },
 
   editProject: function(projectData, callback) {
-    const query = `update ${db.schema}.projects set name = '${projectData.name}', description = '${projectData.description}' where id = '${projectData.id}' and user_id = '${projectData.user_id}';`;
+    const query = `update ${db.schema}.projects set name = '${(projectData.name).trim()}', description = '${(projectData.description).trim()}' where id = '${projectData.id}' and user_id = '${projectData.user_id}';`;
 
     db.client.query(query, function(err) {
       if (!err) {

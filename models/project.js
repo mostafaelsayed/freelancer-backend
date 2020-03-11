@@ -8,11 +8,25 @@ module.exports = {
 
     db.client.query(query, function(err, result) {
       if (!err) {
-        console.log('success get all projects');
+        console.log('success get projects');
         callback(undefined, result.rows);
       }
       else {
         console.log('error get projects : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
+    });
+  },
+  getAssignedProjects: function(userId, callback) {
+    const query = `select * from ${db.schema}.user_projects where assigned_user_id = '${userId}';`;
+
+    db.client.query(query, function(err, result) {
+      if (!err) {
+        console.log('success get assigned projects');
+        callback(undefined, result.rows);
+      }
+      else {
+        console.log('error get assigned projects : ', util.inspect(err, utilOptions));
         callback(1);
       }
     });
@@ -34,10 +48,22 @@ module.exports = {
   addProject: function(projectData, callback) {
     const query = `insert into ${db.schema}.projects(name, description, user_id) values ('${(projectData.name).trim()}', '${(projectData.description).trim()}', '${projectData.user_id}')`;
 
-    db.client.query(query, function(err) {
+    db.client.query(query, function(err, result) {
       if (!err) {
-        console.log('success add project');
-        callback();
+        console.log('add project result : ', util.inspect(result, utilOptions));
+        const query2 = `insert into ${db.schema}.user_projects(user_id, project_id) values('${projectData.user_id}', '${result.id}')`
+        
+        db.client.query(query2, function(err2, result2) {
+          if (!err2) {
+            console.log('success add project : ', result);
+            callback();
+          }
+          else {
+            console.log('error add project : ', util.inspect(err, utilOptions));
+            callback(1);
+          }
+        });
+        
       }
       else {
         console.log('error add project : ', util.inspect(err, utilOptions));

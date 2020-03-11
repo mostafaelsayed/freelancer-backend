@@ -80,8 +80,17 @@ module.exports = function() {
 
                             const token = getToken({
                                 id: res1.rows[0]['id'],
-                                email: inputEmail
+                                email: inputEmail,
+                                role: res1.rows[0]['role']
                             });
+
+                            if (res1.rows[0]['role'].length > 1) {
+                                res.json({
+                                    message: 'specify role',
+                                    token,
+                                    user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role']}
+                                });
+                            }
 
                             // req.session.user = {
                             //     email: inputEmail,
@@ -94,9 +103,11 @@ module.exports = function() {
                             //         console.log('error saving session : ', err);
                             //     }
                             //   });
+                            else {
+                                console.log("login role : ", res1.rows[0]['role']);
 
-                            res.json({message: 'success login', token});
-                            
+                                res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role']}});
+                            }
                         }
                         else {
                             console.log('fail login : ', util.inspect(er2, utilOptions));
@@ -114,6 +125,11 @@ module.exports = function() {
                 res.json({message: 'fail login'});
             }
         });
+    });
+
+    router.post('/changeRole', function(req, res) {
+        res.locals.role = req.body.role;
+        res.json({message: 'done choose role'}).status(200);
     });
 
     router.get('/getUsers', function(req, res) {

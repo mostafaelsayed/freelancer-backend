@@ -5,7 +5,7 @@ const utilOptions = { depth: null };
 
 module.exports = {
     getToken(user) {
-        return jwt.sign({email: user.email, id: user.id}, secrets.tokenSecret, { expiresIn: 24*60*60 });
+        return jwt.sign({email: user.email, id: user.id, role: user.role}, secrets.tokenSecret, { expiresIn: 24*60*60 });
     },
 
     verifyToken(token) {
@@ -20,7 +20,7 @@ module.exports = {
                 }
                 else {
                     console.log('success verify token : ', util.inspect(decoded, utilOptions));
-                    resolve(decoded.id);
+                    resolve(decoded);
                 }
             });
         });

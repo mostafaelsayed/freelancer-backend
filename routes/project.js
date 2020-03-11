@@ -5,17 +5,45 @@ const util = require('util');
 const utilOptions = { depth: null };
 
 module.exports = function() {
+    // router.get('/getAllProjects', function(req, res) {
+    //     project.getProjects(res.locals.userId, function(err, result) {
+    //         if (!err) {
+    //             console.log('success get user projects');
+    //             res.json(result);
+    //         }
+    //         else {
+    //             console.log('error get user projects : ', util.inspect(err, utilOptions));
+    //             res.json({message: 'error get projects'});
+    //         }
+    //     });
+    // });
+
     router.get('/getProjects', function(req, res) {
-        project.getProjects(res.locals.userId, function(err, result) {
-            if (!err) {
-                console.log('success get user projects');
-                res.json(result);
-            }
-            else {
-                console.log('error get user projects : ', util.inspect(err, utilOptions));
-                res.json({message: 'error get projects'});
-            }
-        });
+        
+        if (res.locals.role[0] == 'client') {
+            project.getProjects(res.locals.userId, function(err, result) {
+                if (!err) {
+                    console.log('success get user projects');
+                    res.json(result);
+                }
+                else {
+                    console.log('error get user projects : ', util.inspect(err, utilOptions));
+                    res.json({message: 'error get projects'});
+                }
+            });
+        }
+        else {
+            project.getAssignedProjects(res.locals.userId, function(err, result) {
+                if (!err) {
+                    console.log('success get assigned projects');
+                    res.json(result);
+                }
+                else {
+                    console.log('error get assigned projects : ', util.inspect(err, utilOptions));
+                    res.json({message: 'error get assigned projects'});
+                }
+            });
+        }
     });
 
     router.get('/getProjectById', function(req, res) {

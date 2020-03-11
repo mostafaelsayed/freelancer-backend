@@ -31,10 +31,11 @@ app.use(bodyParser.json());
 app.use('/api', function(req, res, next) {
 	console.log('req.url : ', req.url);
 	if (req.url != '/signup' && req.url != '/login') {
-		verifyToken(req.headers['authorization']).then((userId) => {
-			console.log('user id after verify : ', userId);
-			res.locals.userId = userId;
-
+		verifyToken(req.headers['authorization']).then((decoded) => {
+			console.log('user id after verify : ', decoded.id);
+			res.locals.userId = decoded.id;
+			res.locals.role = decoded.role;
+			console.log('res.locals.role : ', res.locals.role[0]);
 			return next();
 
 		}).catch((err) => {

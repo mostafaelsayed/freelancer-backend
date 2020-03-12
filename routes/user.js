@@ -1,10 +1,11 @@
 
 const util = require('util');
+const utilOptions = { depth: null };
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
 const getToken = require('../helpers/authentication-helper').getToken;
-const utilOptions = { depth: null };
+const verifyToken = require('../helpers/authentication-helper').verifyToken;
 const user = require('../models/user');
 
 module.exports = function() {
@@ -81,7 +82,7 @@ module.exports = function() {
                             const token = getToken({
                                 id: res1.rows[0]['id'],
                                 email: inputEmail,
-                                role: res1.rows[0]['role']
+                                role: res1.rows[0]['role'][0]
                             });
 
                             if (res1.rows[0]['role'].length > 1) {
@@ -106,7 +107,7 @@ module.exports = function() {
                             else {
                                 console.log("login role : ", res1.rows[0]['role']);
 
-                                res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role']}});
+                                res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role'][0]}});
                             }
                         }
                         else {
@@ -128,8 +129,23 @@ module.exports = function() {
     });
 
     router.post('/changeRole', function(req, res) {
-        res.locals.role = req.body.role;
-        res.json({message: 'done choose role'}).status(200);
+        verifyToken(req.headers['authorization']).then((decoded) => {
+            let newToken = getToken({
+                id: decoded.id,
+                email: decoded.email,
+                role: req.body.role
+            });
+
+            console.log('decoded in change role : ', util.inspect(decoded, utilOptions));
+            console.log('role in change role : ', util.inspect(req.body.role, utilOptions));
+
+            res.json({message: 'done choose role', token: newToken}).status(200);
+        }).catch((err) => {
+            console.log('error specify role : ', util.inspect(err, utilOptions));
+            res.json('error specify role').status(500);
+        })
+
+        
     });
 
     router.get('/getUsers', function(req, res) {

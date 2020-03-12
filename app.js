@@ -7,6 +7,8 @@ const app = express();
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const port = process.env.PORT || 8000;
+const util = require('util');
+const utilOptions = { depth: null };
 
 
 const verifyToken = require('./helpers/authentication-helper').verifyToken;
@@ -35,10 +37,12 @@ app.use('/api', function(req, res, next) {
 			console.log('user id after verify : ', decoded.id);
 			res.locals.userId = decoded.id;
 			res.locals.role = decoded.role;
-			console.log('res.locals.role : ', res.locals.role[0]);
+			console.log('res.locals.role : ', res.locals.role);
 			return next();
 
 		}).catch((err) => {
+			console.log('error verify token : ', util.inspect(err, utilOptions));
+			
 			return res.status(403).send({
 				message: 'Failed to authenticate token....'
 			});

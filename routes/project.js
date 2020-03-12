@@ -20,7 +20,7 @@ module.exports = function() {
 
     router.get('/getProjects', function(req, res) {
         
-        if (res.locals.role[0] == 'client') {
+        if (res.locals.role == 'client') {
             project.getProjects(res.locals.userId, function(err, result) {
                 if (!err) {
                     console.log('success get user projects');

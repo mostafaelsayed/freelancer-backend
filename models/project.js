@@ -17,6 +17,20 @@ module.exports = {
       }
     });
   },
+  getSpecificProjects: function(callback) {
+    const query = `select * from ${db.schema}.projects;`;
+
+    db.client.query(query, function(err, result) {
+      if (!err) {
+        console.log('success get specific projects');
+        callback(undefined, result.rows);
+      }
+      else {
+        console.log('error get specific projects : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
+    });
+  },
   getAssignedProjects: function(userId, callback) {
     const query = `select * from ${db.schema}.user_projects where assigned_user_id = '${userId}';`;
 

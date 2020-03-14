@@ -46,6 +46,19 @@ module.exports = function() {
         }
     });
 
+    router.get('/getSpecificProjects', function(req, res) {
+        project.getSpecificProjects(function(err, result) {
+            if (!err) {
+                console.log('success get specific projects');
+                res.json(result);
+            }
+            else {
+                console.log('error get specific projects : ', util.inspect(err, utilOptions));
+                res.json({message: 'error get specific projects'});
+            }
+        });
+    });
+
     router.get('/getProjectById', function(req, res) {
         project.getProjectById(req.query.projectId, res.locals.userId, function(err, result) {
             if (!err) {

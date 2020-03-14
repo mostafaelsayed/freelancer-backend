@@ -3,8 +3,8 @@
 
 **Changelog**
 
-* Freelancer can only view projects and its description, the experience required and assign it to himself/herself.
 * Role management.
+* Freelancer can only view projects and its description, the experience required and assign it to himself/herself.
 * Client pay to freelancer after completion.
 * Add support team (admins).
 * Client interview freelancers assigned.

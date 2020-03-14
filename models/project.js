@@ -45,8 +45,16 @@ module.exports = {
       }
     });
   },
-  getProjectById: function(projectId, userId, callback) {
-    const query = `select * from ${db.schema}.projects where id = '${projectId}' and user_id = '${userId}';`;
+  getProjectById: function(projectId, callback, user_id) {
+    let query = '';
+
+    if (user_id) {
+      query = `select * from ${db.schema}.projects where id = '${projectId}'
+        and user_id = '${user_id}';`;
+    }
+    else {
+      query = `select * from ${db.schema}.projects where id = '${projectId}';`;
+    }
 
     db.client.query(query, function(err, result) {
       if (!err) {

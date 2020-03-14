@@ -60,14 +60,26 @@ module.exports = function() {
     });
 
     router.get('/getProjectById', function(req, res) {
-        project.getProjectById(req.query.projectId, res.locals.userId, function(err, result) {
-            if (!err) {
-                res.json(result);
-            }
-            else {
-                res.json({message: 'error get project'});
-            }
-        });
+        if (res.locals.role == 'freelancer') {
+            project.getProjectById(req.query.projectId, function(err, result) {
+                if (!err) {
+                    res.json(result);
+                }
+                else {
+                    res.json({message: 'error get project'});
+                }
+            });
+        }
+        else {
+            project.getProjectById(req.query.projectId, function(err, result) {
+                if (!err) {
+                    res.json(result);
+                }
+                else {
+                    res.json({message: 'error get project'});
+                }
+            }, res.locals.userId);
+        }
     });
 
     router.post('/addProject', function(req, res) {

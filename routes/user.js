@@ -7,18 +7,14 @@ const router = express.Router();
 const getToken = require('../helpers/authentication-helper').getToken;
 const verifyToken = require('../helpers/authentication-helper').verifyToken;
 const user = require('../models/user');
+const prepareForArrayInsert = require('../helpers/data-prep').prepareForArrayInsert;
 
 module.exports = function() {
 
     router.post('/signup', function(req, res) {
         console.log('req body signup : ', util.inspect(req.body, utilOptions));
         let inputEmail = req.body.email;
-
-        // arrays in postgres are inserted like this : '{freelancer, client}' (curly brackets not square brackets).
-        let roles = req.body.roles.join(',');
-        roles = roles.replace("'", '');
-        roles = roles.replace('"', '');
-        let inputRoles = '{' + roles + '}';
+        let inputRoles = prepareForArrayInsert(req.body.roles);
         const inputPassword = req.body.password;
         
         bcrypt.genSalt(10, function(err1, salt) {
@@ -31,15 +27,33 @@ module.exports = function() {
                                 //let escapedEmail = db.connection.escape(inputEmail);
                                 //let escapedEmailLength = escapedEmail.length;
                                 //escapedEmail = escapedEmail.substring(1, escapedEmailLength - 1);
+                                console.log('success insert user : ', util.inspect(res3, utilOptions));
+
                                 const token = getToken({
                                     email: inputEmail,
-                                    id: res3.rows[0]['id']
+                                    id: res3.rows[0]['id'],
+                                    role: res3.rows[0]['roles']
                                 });
 
-                                console.log('success insert user : ', util.inspect(res3, utilOptions));
+                                if (inputRoles.length > 1) {
+                                    res.json({
+                                        message: 'specify roles',
+                                        token,
+                                        user: {id: res3.rows[0]['id'], email: inputEmail, role: res3.rows[0]['roles']}
+                                    });
+                                }
+                                else {
+                                    res.json({
+                                        message: 'success register',
+                                        token,
+                                        user: {id: res3.rows[0]['id'], email: inputEmail, role: res3.rows[0]['roles'][0]}
+                                    });
+                                }
+
+                                
                                 
 
-                                res.json({message: 'success register', token});
+                                
                             }
                             else {
                                 console.log('error signup : ', util.inspect(err3, utilOptions));
@@ -82,14 +96,14 @@ module.exports = function() {
                             const token = getToken({
                                 id: res1.rows[0]['id'],
                                 email: inputEmail,
-                                role: res1.rows[0]['role'][0]
+                                role: res1.rows[0]['roles']
                             });
 
-                            if (res1.rows[0]['role'].length > 1) {
+                            if (res1.rows[0]['roles'].length > 1) {
                                 res.json({
-                                    message: 'specify role',
+                                    message: 'specify roles',
                                     token,
-                                    user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role']}
+                                    user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['roles']}
                                 });
                             }
 
@@ -105,9 +119,9 @@ module.exports = function() {
                             //     }
                             //   });
                             else {
-                                console.log("login role : ", res1.rows[0]['role']);
+                                console.log("login role : ", res1.rows[0]['roles']);
 
-                                res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['role'][0]}});
+                                res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['roles'][0]}});
                             }
                         }
                         else {

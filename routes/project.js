@@ -3,6 +3,7 @@ let router = express.Router();
 let project = require('../models/project');
 const util = require('util');
 const utilOptions = { depth: null };
+const prepareForArrayInsert = require('../helpers/data-prep').prepareForArrayInsert;
 
 module.exports = function() {
     // router.get('/getAllProjects', function(req, res) {
@@ -104,11 +105,14 @@ module.exports = function() {
     router.post('/addProject', function(req, res) {
         req.body.user_id = res.locals.userId;
         
-        let technologies = req.body.technologies.join(',');
-        technologies = technologies.replace("'", '');
-        technologies = technologies.replace('"', '');
-        let inputTechnologies = '{' + technologies + '}';
-        req.body.technologies = inputTechnologies;
+        // let technologies = req.body.technologies.join(',');
+        // technologies = technologies.replace("'", '');
+        // technologies = technologies.replace('"', '');
+        // let inputTechnologies = '{' + technologies + '}';
+        // req.body.technologies = inputTechnologies;
+        req.body.technologies = prepareForArrayInsert(req.body.technologies);
+        //req.body.name = req.body.name.replace("'", "''");
+        //req.body.description = req.body.description.replace("'", "''");
         
         project.addProject(req.body, function(err) {
             if (!err) {
@@ -123,11 +127,12 @@ module.exports = function() {
     router.post('/editProject', function(req, res) {
         req.body.user_id = res.locals.userId;
 
-        let technologies = req.body.technologies.join(',');
-        technologies = technologies.replace("'", '');
-        technologies = technologies.replace('"', '');
-        let inputTechnologies = '{' + technologies + '}';
-        req.body.technologies = inputTechnologies;
+        // let technologies = req.body.technologies.join(',');
+        // technologies = technologies.replace("'", '');
+        // technologies = technologies.replace('"', '');
+        // let inputTechnologies = '{' + technologies + '}';
+        // req.body.technologies = inputTechnologies;
+        req.body.technologies = prepareForArrayInsert(req.body.technologies);
         
         project.editProject(req.body, function(err) {
             if (!err) {

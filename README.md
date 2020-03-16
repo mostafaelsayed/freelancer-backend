@@ -4,6 +4,10 @@
 **Changelog**
 
 * Role management.
+* Add Attributes to Project :
+    * technologies (string array).
+    * hourly-based price or milestone-based price (price model) (number).
+    * period (years + months + days).
 * Freelancer can only view projects and its description, the experience required and assign it to himself/herself.
 * Client pay to freelancer after completion.
 * Add support team (admins).

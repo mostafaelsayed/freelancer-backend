@@ -18,6 +18,25 @@ module.exports = function() {
     //     });
     // });
 
+    router.get('/getTechnologies', function(req, res) {
+        project.getTechnologies(function(err, result) {
+            if (!err) {
+                console.log('success get technologies');
+                
+                res.json({
+                    technologies: result
+                });
+            }
+            else {
+                console.log('error get technologies : ', util.inspect(err, utilOptions));
+
+                res.json({
+                    message: 'error get technologies'
+                });
+            }
+        })
+    });
+
     router.get('/getProjects', function(req, res) {
         
         if (res.locals.role == 'client') {
@@ -85,6 +104,12 @@ module.exports = function() {
     router.post('/addProject', function(req, res) {
         req.body.user_id = res.locals.userId;
         
+        let technologies = req.body.technologies.join(',');
+        technologies = technologies.replace("'", '');
+        technologies = technologies.replace('"', '');
+        let inputTechnologies = '{' + technologies + '}';
+        req.body.technologies = inputTechnologies;
+        
         project.addProject(req.body, function(err) {
             if (!err) {
                 res.json({message: 'success add project'});
@@ -97,6 +122,12 @@ module.exports = function() {
 
     router.post('/editProject', function(req, res) {
         req.body.user_id = res.locals.userId;
+
+        let technologies = req.body.technologies.join(',');
+        technologies = technologies.replace("'", '');
+        technologies = technologies.replace('"', '');
+        let inputTechnologies = '{' + technologies + '}';
+        req.body.technologies = inputTechnologies;
         
         project.editProject(req.body, function(err) {
             if (!err) {

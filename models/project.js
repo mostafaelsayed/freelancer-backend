@@ -46,7 +46,7 @@ module.exports = {
     });
   },
   getAssignedProjects: function(userId, callback) {
-    const query = `select * from ${db.schema}.user_projects where assigned_user_id = '${userId}';`;
+    const query = `select * from ${db.schema}.user_projects inner join ${db.schema}.projects on ${db.schema}.projects.id=${db.schema}.user_projects.project_id where assigned_user_id = '${userId}';`;
 
     db.client.query(query, function(err, result) {
       if (!err) {
@@ -81,6 +81,36 @@ module.exports = {
       }
     });
   },
+  assignProject: function(projectData, callback) {
+    const values = [projectData.user_id, projectData.id, projectData.toBeAssignedUserId];
+    const query = `insert into ${db.schema}.user_projects(user_id, project_id, assigned_user_id) values ($1, $2, $3) RETURNING id;`;
+    
+    db.client.query(query, values, function(err, result) {
+      if (!err) {
+        console.log('success assign project in model : ', result);
+        callback();
+      }
+      else {
+        console.log('error assign project in model : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
+    });
+  },
+  unAssignProject: function(projectData, callback) {
+    const values = [projectData.id, projectData.toBeUnAssignedUserId];
+    const query = `delete from ${db.schema}.user_projects where project_id = $1 and assigned_user_id = $2;`;
+
+    db.client.query(query, values, function(err, result) {
+      if (!err) {
+        console.log('success unassign project in model : ', result);
+        callback();
+      }
+      else {
+        console.log('error unassign project in model : ', util.inspect(err, utilOptions));
+        callback(1);
+      }
+    });
+  },
   addProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
       projectData.user_id, projectData.technologies];
@@ -88,8 +118,6 @@ module.exports = {
 
     db.client.query(query, values, function(err, result) {
       if (!err) {
-        // console.log('add project result : ', util.inspect(result, utilOptions));
-        // const query2 = `insert into ${db.schema}.user_projects(user_id, project_id) values('${projectData.user_id}', '${result.rows[0].id}')`
         console.log('success add project in model : ', result);
         callback();
       }

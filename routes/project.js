@@ -38,6 +38,26 @@ module.exports = function() {
         })
     });
 
+    router.get('/getAssignedProjects', function(req, res) {
+        project.getAssignedProjects(res.locals.userId, function(err, result) {
+            if (!err) {
+                console.log('success get assigned projects');
+
+                res.json({
+                    'message': 'done get assigned projects',
+                    assignedProjects: result
+                });
+            }
+            else {
+                console.log('error get assigned projects');
+
+                res.json({
+                    'message': 'error get assigned projects'
+                });
+            }
+        })
+    });
+
     router.get('/getProjects', function(req, res) {
         
         if (res.locals.role == 'client') {
@@ -53,16 +73,18 @@ module.exports = function() {
             });
         }
         else {
-            project.getAssignedProjects(res.locals.userId, function(err, result) {
-                if (!err) {
-                    console.log('success get assigned projects');
-                    res.json(result);
-                }
-                else {
-                    console.log('error get assigned projects : ', util.inspect(err, utilOptions));
-                    res.json({message: 'error get assigned projects'});
-                }
-            });
+            // project.getAssignedProjects(res.locals.userId, function(err, result) {
+            //     if (!err) {
+            //         console.log('success get assigned projects');
+            //         res.json(result);
+            //     }
+            //     else {
+            //         console.log('error get assigned projects : ', util.inspect(err, utilOptions));
+            //         res.json({message: 'error get assigned projects'});
+            //     }
+            // });
+            console.log('not authorized to get assigned projects');
+            res.json({message: 'error get assigned projects'}).status(403);
         }
     });
 
@@ -102,17 +124,39 @@ module.exports = function() {
         }
     });
 
+    router.post('/assignProject', function(req, res) {
+        req.body.toBeAssignedUserId = res.locals.userId;
+
+        project.assignProject(req.body, function(err, result) {
+            if (!err) {
+                console.log('success assign project');
+                res.json({'message': 'done assign project'}).status(200);
+            }
+            else {
+                console.log('error assign project : ', util.inspect(err, utilOptions));
+                res.json({'message': 'error assign project'});
+            }
+        });
+    });
+
+    router.post('/unAssignProject', function(req, res) {
+        req.body.toBeUnAssignedUserId = res.locals.userId;
+        project.unAssignProject(req.body, function(err, result) {
+            if (!err) {
+                console.log('success unassign project');
+                res.json({'message': 'done unassign project'}).status(200);
+            }
+            else {
+                console.log('error unassign project : ', util.inspect(err, utilOptions));
+                res.json({'message': 'error unassign project'});
+            }
+        })
+    });
+
     router.post('/addProject', function(req, res) {
         req.body.user_id = res.locals.userId;
-        
-        // let technologies = req.body.technologies.join(',');
-        // technologies = technologies.replace("'", '');
-        // technologies = technologies.replace('"', '');
-        // let inputTechnologies = '{' + technologies + '}';
-        // req.body.technologies = inputTechnologies;
+       
         req.body.technologies = prepareForArrayInsert(req.body.technologies);
-        //req.body.name = req.body.name.replace("'", "''");
-        //req.body.description = req.body.description.replace("'", "''");
         
         project.addProject(req.body, function(err) {
             if (!err) {
@@ -127,11 +171,6 @@ module.exports = function() {
     router.post('/editProject', function(req, res) {
         req.body.user_id = res.locals.userId;
 
-        // let technologies = req.body.technologies.join(',');
-        // technologies = technologies.replace("'", '');
-        // technologies = technologies.replace('"', '');
-        // let inputTechnologies = '{' + technologies + '}';
-        // req.body.technologies = inputTechnologies;
         req.body.technologies = prepareForArrayInsert(req.body.technologies);
         
         project.editProject(req.body, function(err) {

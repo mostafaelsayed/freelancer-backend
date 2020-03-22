@@ -49,11 +49,6 @@ module.exports = function() {
                                         user: {id: res3.rows[0]['id'], email: inputEmail, role: res3.rows[0]['roles'][0]}
                                     });
                                 }
-
-                                
-                                
-
-                                
                             }
                             else {
                                 console.log('error signup : ', util.inspect(err3, utilOptions));
@@ -106,18 +101,6 @@ module.exports = function() {
                                     user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['roles']}
                                 });
                             }
-
-                            // req.session.user = {
-                            //     email: inputEmail,
-                            //     id: res1.rows[0]['id']
-                            // };
-
-                            // req.session.save(function(err) {
-                            //     // session saved
-                            //     if (err) {
-                            //         console.log('error saving session : ', err);
-                            //     }
-                            //   });
                             else {
                                 console.log("login role : ", res1.rows[0]['roles']);
 

@@ -27,3 +27,7 @@ alter table test.user_projects
     DROP CONSTRAINT project_id,
     ADD CONSTRAINT project_id 
     FOREIGN KEY (project_id) REFERENCES test.projects(id) ON DELETE cascade on update cascade;
+	
+	
+-- check constraint
+alter table test.projects add column period character varying [] check (array_length(period, 1) = 3);

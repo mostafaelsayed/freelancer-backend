@@ -113,8 +113,8 @@ module.exports = {
   },
   addProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.user_id, projectData.technologies];
-    const query = `insert into ${db.schema}.projects(name, description, user_id, technologies) values ($1, $2, $3, $4) RETURNING id;`;
+      projectData.user_id, projectData.technologies, projectData.period];
+    const query = `insert into ${db.schema}.projects(name, description, user_id, technologies, period) values ($1, $2, $3, $4, $5) RETURNING id;`;
 
     db.client.query(query, values, function(err, result) {
       if (!err) {
@@ -130,8 +130,8 @@ module.exports = {
 
   editProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.technologies, projectData.id, projectData.user_id];
-    const query = `update ${db.schema}.projects set name = $1, description = $2, technologies = $3 where id = $4 and user_id = $5;`;
+      projectData.technologies, projectData.period, projectData.id, projectData.user_id];
+    const query = `update ${db.schema}.projects set name = $1, description = $2, technologies = $3, period = $4 where id = $5 and user_id = $6;`;
 
     db.client.query(query, values, function(err) {
       if (!err) {

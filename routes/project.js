@@ -157,6 +157,7 @@ module.exports = function() {
         req.body.user_id = res.locals.userId;
        
         req.body.technologies = prepareForArrayInsert(req.body.technologies);
+        req.body.period = prepareForArrayInsert(req.body.period);
         
         project.addProject(req.body, function(err) {
             if (!err) {

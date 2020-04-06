@@ -154,10 +154,13 @@ module.exports = function() {
     });
 
     router.post('/addProject', function(req, res) {
-        req.body.user_id = res.locals.userId;
+        req.body.userId = res.locals.userId;
        
         req.body.technologies = prepareForArrayInsert(req.body.technologies);
+        // console.log("techs : ", req.body.technologies);
+        // console.log("period : ", req.body.period);
         req.body.period = prepareForArrayInsert(req.body.period);
+        
         
         project.addProject(req.body, function(err) {
             if (!err) {
@@ -170,7 +173,7 @@ module.exports = function() {
     });
 
     router.post('/editProject', function(req, res) {
-        req.body.user_id = res.locals.userId;
+        req.body.userId = res.locals.userId;
 
         req.body.technologies = prepareForArrayInsert(req.body.technologies);
         
@@ -185,7 +188,7 @@ module.exports = function() {
     });
 
     router.post('/deleteProject', function(req, res) {
-        req.body.user_id = res.locals.userId;
+        req.body.userId = res.locals.userId;
         
         project.deleteProject(req.body, function(err) {
             if (!err) {

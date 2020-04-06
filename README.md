@@ -8,7 +8,7 @@
     * technologies (string array).
     * hourly-based price or milestone-based price (price model) (number).
     * period (years + months + days).
-* Freelancer can only view projects and its description, price model (hourly or milestone based), price, period, start date, the experience required and assign it to       himself/herself.
+* Freelancer can only view projects and its description, price model (hourly or milestone based), price, period, start date, the experience required and assign it to himself/herself.
 * Client pay to freelancer after completion.
 * Add support team (admins).
 * Client interview freelancers assigned.

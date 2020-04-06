@@ -4,7 +4,7 @@ const db = require('../database/connection').createConnection();
 
 module.exports = {
   getUsers: function(callback) {
-    let query = `select * from ${db.schema}.users`;
+    let query = `select * from ${db.schema}."users"`;
 
     db.client.query(query, (err, success) => {
       if (!err) {
@@ -18,7 +18,8 @@ module.exports = {
     });
   },
   addUser: function(userData, callback) {
-    let query = `insert into ${db.schema}.users(email, roles, password_hash) values('${userData.inputEmail}', '${userData.inputRoles}', '${userData.hash}') returning *;`;
+    let query = `insert into ${db.schema}."users"("email", "roles", "passwordHash")
+      values ('${userData.inputEmail}', '${userData.inputRoles}', '${userData.hash}') returning *;`;
 
     db.client.query(query, (err, success) => {
       if (!err) {
@@ -32,7 +33,7 @@ module.exports = {
     });
   },
   getUser: function(inputEmail, callback) {
-    let query = `select * from ${db.schema}.users where email = '${inputEmail}';`;
+    let query = `select * from ${db.schema}."users" where "email" = '${inputEmail}';`;
 
     db.client.query(query, (err, success) => {
       if (err) {

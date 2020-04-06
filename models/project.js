@@ -4,7 +4,7 @@ const utilOptions = { depth: null };
 
 module.exports = {
   getTechnologies: function(callback) {
-    const query = `select * from ${db.schema}.technologies;`;
+    const query = `select * from ${db.schema}."technologies";`;
 
     db.client.query(query, function(err, result) {
       if (!err) {
@@ -18,7 +18,7 @@ module.exports = {
     })
   },
   getProjects: function(userId, callback) {
-    const query = `select * from ${db.schema}.projects where user_id = '${userId}';`;
+    const query = `select * from ${db.schema}."projects" where "userId" = '${userId}';`;
 
     db.client.query(query, function(err, result) {
       if (!err) {
@@ -32,7 +32,7 @@ module.exports = {
     });
   },
   getSpecificProjects: function(callback) {
-    const query = `select * from ${db.schema}.projects;`;
+    const query = `select * from ${db.schema}."projects";`;
 
     db.client.query(query, function(err, result) {
       if (!err) {
@@ -46,7 +46,8 @@ module.exports = {
     });
   },
   getAssignedProjects: function(userId, callback) {
-    const query = `select * from ${db.schema}.user_projects inner join ${db.schema}.projects on ${db.schema}.projects.id=${db.schema}.user_projects.project_id where assigned_user_id = '${userId}';`;
+    const query = `select * from ${db.schema}."userProjects" inner join ${db.schema}."projects"
+      on ${db.schema}."projects"."id" = ${db.schema}."userProjects"."projectId" where "assignedUserId" = '${userId}';`;
 
     db.client.query(query, function(err, result) {
       if (!err) {
@@ -59,15 +60,15 @@ module.exports = {
       }
     });
   },
-  getProjectById: function(projectId, callback, user_id) {
+  getProjectById: function(projectId, callback, userId) {
     let query = '';
 
-    if (user_id) {
-      query = `select * from ${db.schema}.projects where id = '${projectId}'
-        and user_id = '${user_id}';`;
+    if (userId) {
+      query = `select * from ${db.schema}."projects" where "id" = '${projectId}'
+        and "userId" = '${userId}';`;
     }
     else {
-      query = `select * from ${db.schema}.projects where id = '${projectId}';`;
+      query = `select * from ${db.schema}."projects" where "id" = '${projectId}';`;
     }
 
     db.client.query(query, function(err, result) {
@@ -82,8 +83,9 @@ module.exports = {
     });
   },
   assignProject: function(projectData, callback) {
-    const values = [projectData.user_id, projectData.id, projectData.toBeAssignedUserId];
-    const query = `insert into ${db.schema}.user_projects(user_id, project_id, assigned_user_id) values ($1, $2, $3) RETURNING id;`;
+    const values = [projectData.userId, projectData.id, projectData.toBeAssignedUserId];
+    const query = `insert into ${db.schema}."userProjects"("userId", "projectId", "assignedUserId")
+      values ($1, $2, $3) RETURNING "id";`;
     
     db.client.query(query, values, function(err, result) {
       if (!err) {
@@ -98,7 +100,7 @@ module.exports = {
   },
   unAssignProject: function(projectData, callback) {
     const values = [projectData.id, projectData.toBeUnAssignedUserId];
-    const query = `delete from ${db.schema}.user_projects where project_id = $1 and assigned_user_id = $2;`;
+    const query = `delete from ${db.schema}."userProjects" where "projectId" = $1 and "assignedUserId" = $2;`;
 
     db.client.query(query, values, function(err, result) {
       if (!err) {
@@ -113,8 +115,9 @@ module.exports = {
   },
   addProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.user_id, projectData.technologies, projectData.period];
-    const query = `insert into ${db.schema}.projects(name, description, user_id, technologies, period) values ($1, $2, $3, $4, $5) RETURNING id;`;
+      projectData.userId, projectData.technologies, projectData.period];
+    const query = `insert into ${db.schema}."projects"("name", "description", "userId", "technologies", "period")
+      values ($1, $2, $3, $4, $5) RETURNING "id";`;
 
     db.client.query(query, values, function(err, result) {
       if (!err) {
@@ -130,8 +133,9 @@ module.exports = {
 
   editProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.technologies, projectData.period, projectData.id, projectData.user_id];
-    const query = `update ${db.schema}.projects set name = $1, description = $2, technologies = $3, period = $4 where id = $5 and user_id = $6;`;
+      projectData.technologies, projectData.period, projectData.id, projectData.userId];
+    const query = `update ${db.schema}."projects" set "name" = $1, "description" = $2, "technologies" = $3, "period" = $4
+      where "id" = $5 and "userId" = $6;`;
 
     db.client.query(query, values, function(err) {
       if (!err) {
@@ -146,7 +150,7 @@ module.exports = {
   },
 
   deleteProject: function(projectData, callback) {
-    const query = `delete from ${db.schema}.projects where id = '${projectData.id}' and user_id = '${projectData.user_id}';`;
+    const query = `delete from ${db.schema}."projects" where "id" = '${projectData.id}' and "userId" = '${projectData.userId}';`;
 
     db.client.query(query, function(err) {
       if (!err) {

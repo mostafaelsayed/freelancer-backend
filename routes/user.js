@@ -78,7 +78,7 @@ module.exports = function() {
         user.getUser(inputEmail, function(er1, res1) {
             if (!er1 && res1.rows[0]) {
                 console.log('result get user : ', util.inspect(res1, utilOptions));
-                const hash = res1.rows[0]['password_hash'];
+                const hash = res1.rows[0]['passwordHash'];
 
                 // compare the hash of the input password with the stored hash
                 bcrypt.compare(inputPassword, hash, function(er2, res2) {

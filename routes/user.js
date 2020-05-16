@@ -95,11 +95,16 @@ module.exports = function() {
                             });
 
                             if (res1.rows[0]['roles'].length > 1) {
-                                res.json({
-                                    message: 'specify roles',
-                                    token,
-                                    user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['roles']}
-                                });
+                                if (req.body.specifiedRole && res1.rows[0]['roles'].includes(req.body.specifiedRole)) {
+                                    res.json({message: 'success login', token, user: {id: res1.rows[0]['id'], email: inputEmail, role: req.body.specifiedRole}});
+                                }
+                                else {
+                                    res.json({
+                                        message: 'specify roles',
+                                        token,
+                                        user: {id: res1.rows[0]['id'], email: inputEmail, role: res1.rows[0]['roles']}
+                                    });
+                                }
                             }
                             else {
                                 console.log("login role : ", res1.rows[0]['roles']);

@@ -1,6 +1,7 @@
 //const api = require('./routes')(); // we must call the function to return the router for us
 const userApi = require('./routes/user')();
 const projectApi = require('./routes/project')();
+const technologyApi = require('./routes/technology')();
 const express = require('express');
 //const expressSession = require('express-session');
 const app = express();
@@ -54,7 +55,7 @@ app.use('/api', function(req, res, next) {
 	}
 });
 
-app.use('/api', [userApi, projectApi]);
+app.use('/api', [userApi, projectApi, technologyApi]);
 
 app.listen(port, () => {
 	console.log('listening on port ' + port);

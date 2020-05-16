@@ -2,8 +2,13 @@ let express = require('express');
 let router = express.Router();
 let project = require('../models/project');
 const util = require('util');
+const fs = require('fs');
+const path = require('path');
 const utilOptions = { depth: null };
 const prepareForArrayInsert = require('../helpers/data-prep').prepareForArrayInsert;
+
+let fileName = path.join(__dirname, '..', 'logs.json');
+let logFile = require(fileName);
 
 module.exports = function() {
     // router.get('/getAllProjects', function(req, res) {
@@ -19,24 +24,7 @@ module.exports = function() {
     //     });
     // });
 
-    router.get('/getTechnologies', function(req, res) {
-        project.getTechnologies(function(err, result) {
-            if (!err) {
-                console.log('success get technologies');
-                
-                res.json({
-                    technologies: result
-                });
-            }
-            else {
-                console.log('error get technologies : ', util.inspect(err, utilOptions));
-
-                res.json({
-                    message: 'error get technologies'
-                });
-            }
-        })
-    });
+    
 
     router.get('/getAssignedProjects', function(req, res) {
         project.getAssignedProjects(res.locals.userId, function(err, result) {
@@ -62,14 +50,39 @@ module.exports = function() {
         
         if (res.locals.role == 'client') {
             project.getProjects(res.locals.userId, function(err, result) {
+                let log = {
+                    "userId": res.locals.userId,
+                    "action": "view projects",
+                    "status": ""
+                };
+
                 if (!err) {
                     console.log('success get user projects');
+                    log.status = "success";
+
                     res.json(result);
                 }
                 else {
                     console.log('error get user projects : ', util.inspect(err, utilOptions));
+                    log.status = "fail";
+
                     res.json({message: 'error get projects'});
                 }
+
+                logFile.logs.push(log);
+                console.log('logs : ', JSON.stringify(logFile));
+
+                fs.writeFileSync(fileName, JSON.stringify(logFile, null, 2),
+                function writeJSON(err) {
+                    if (err) {
+                        console.log('error write log to file');
+                    }
+                    else {
+                        console.log('success write log to file');
+                    }
+                }
+                )
+
             });
         }
         else {

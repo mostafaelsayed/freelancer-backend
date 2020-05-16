@@ -3,20 +3,6 @@ const util = require('util');
 const utilOptions = { depth: null };
 
 module.exports = {
-  getTechnologies: function(callback) {
-    const query = `select * from ${db.schema}."technologies";`;
-
-    db.client.query(query, function(err, result) {
-      if (!err) {
-        console.log('success get technologies in model');
-        callback(undefined, result.rows);
-      }
-      else {
-        console.log('error get technologies in model : ', util.inspect(err, utilOptions));
-        callback(1);
-      }
-    })
-  },
   getProjects: function(userId, callback) {
     const query = `select * from ${db.schema}."projects" where "userId" = '${userId}';`;
 

@@ -76,6 +76,24 @@ module.exports = function() {
         });
     });
 
+    router.delete('/deleteTechnology/:id', function(req, res) {
+        technology.deleteTechnology(req.params.id, function(err, result) {
+            if (err) {
+                console.log('error deleteTechnology in router');
+                res.json({
+                    message: 'error delete technology'
+                });
+            }
+            else {
+                console.log('success deleteTechnology in router');
+                
+                res.json({
+                    message: 'success delete technology'
+                });
+            }
+        });
+    });
+
     return router;
 
 }

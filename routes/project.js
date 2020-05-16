@@ -69,19 +69,19 @@ module.exports = function() {
                     res.json({message: 'error get projects'});
                 }
 
-                // logFile.logs.push(log);
-                // console.log('logs : ', JSON.stringify(logFile));
+                logFile.logs.push(log);
+                console.log('logs : ', JSON.stringify(logFile));
 
-                // fs.writeFileSync(fileName, JSON.stringify(logFile, null, 2),
-                //     function writeJSON(err) {
-                //         if (err) {
-                //             console.log('error write log to file');
-                //         }
-                //         else {
-                //             console.log('success write log to file');
-                //         }
-                //     }
-                // )
+                fs.writeFileSync(fileName, JSON.stringify(logFile, null, 2),
+                function writeJSON(err) {
+                    if (err) {
+                        console.log('error write log to file');
+                    }
+                    else {
+                        console.log('success write log to file');
+                    }
+                }
+                )
 
             });
         }

@@ -67,6 +67,22 @@ module.exports = {
           callback(1);
         }
       });
+    },
+
+    deleteTechnology: function(id, callback) {
+      const values = [id];
+      const query = `delete from ${db.schema}."technologies" where id = $1`;
+
+      db.client.query(query, values, function(err, result) {
+        if (!err) {
+          console.log('success deleteTechnology in model');
+          callback(undefined, 1);
+        }
+        else {
+          console.log('error deleteTechnology in model : ', util.inspect(err, utilOptions));
+          callback(1);
+        }
+      });
     }
 
 }

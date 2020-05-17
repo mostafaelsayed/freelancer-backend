@@ -101,9 +101,9 @@ module.exports = {
   },
   addProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.userId, projectData.technologies, projectData.period];
-    const query = `insert into ${db.schema}."projects"("name", "description", "userId", "technologies", "period")
-      values ($1, $2, $3, $4, $5) RETURNING "id";`;
+      projectData.userId, projectData.technologies, projectData.period, projectData.priceModel];
+    const query = `insert into ${db.schema}."projects"("name", "description", "userId", "technologies", "period", "priceModel")
+      values ($1, $2, $3, $4, $5, $6) RETURNING "id";`;
 
     db.client.query(query, values, function(err, result) {
       if (!err) {
@@ -119,9 +119,9 @@ module.exports = {
 
   editProject: function(projectData, callback) {
     const values = [projectData.name.trim(), projectData.description.trim(),
-      projectData.technologies, projectData.period, projectData.id, projectData.userId];
-    const query = `update ${db.schema}."projects" set "name" = $1, "description" = $2, "technologies" = $3, "period" = $4
-      where "id" = $5 and "userId" = $6;`;
+      projectData.technologies, projectData.period, projectData.priceModel, projectData.id, projectData.userId];
+    const query = `update ${db.schema}."projects" set "name" = $1, "description" = $2, "technologies" = $3, "period" = $4,
+      "priceModel" = $5 where "id" = $6 and "userId" = $7;`;
 
     db.client.query(query, values, function(err) {
       if (!err) {
